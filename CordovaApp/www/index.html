@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; img-src 'self' data: https://*; connect-src 'self' https://*;">
+    <title>Phyllotaxis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: #1a1a2e;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            z-index: 10;
+        }
+        
+        .header {
+            pointer-events: none;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #e94560;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(233, 69, 96, 0.5);
+            -webkit-text-stroke: 1px rgba(233, 69, 96, 0.3);
+        }
+        
+        .header p {
+            color: #f1f1f1;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            opacity: 0.8;
+            margin: 5px 0 0 0;
+        }
+        
+        .instructions {
+            pointer-events: auto;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            max-width: 90%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .instructions h3 {
+            color: #e94560;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            margin: 0 0 10px 0;
+        }
+        
+        .instructions p {
+            color: #f1f1f1;
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+            line-height: 1.5;
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+        
+        /* Cordova specific - prevent overscroll */
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        /* Status bar padding for Cordova */
+        @media (min-width: 320px) and (max-width: 767px) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+    <script>
+        // Cordova device ready handler
+        function onDeviceReady() {
+            console.log('Cordova device ready');
+            // Initialize the app
+            init();
+        }
+        
+        // Check if running in Cordova
+        if (typeof cordova !== 'undefined') {
+            document.addEventListener('deviceready', onDeviceReady, false);
+        } else {
+            // Not in Cordova, initialize immediately
+            window.addEventListener('load', init);
+        }
+    </script>
+</head>
+<body>
+    <div id="canvas-container">
+        <div class="ui-overlay">
+            <div class="header">
+                <h1>Phyllotaxis</h1>
+                <p>Generative Sunflower Pattern</p>
+            </div>
+            <div class="instructions">
+                <h3>How to Interact</h3>
+                <p><strong>Tap anywhere</strong> to change color mode</p>
+                <p>Current mode: <span id="mode-text">Golden</span></p>
+            </div>
+        </div>
+    </div>
+    <script src="phyllotaxis.js"></script>
+</body>
+</html>

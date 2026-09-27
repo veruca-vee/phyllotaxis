@@ -1,0 +1,55 @@
+{
+  "name": "phyllotaxis-mistral",
+  "version": "1.0.0",
+  "description": "Generative art project creating sunflower-like patterns based on phyllotaxis algorithm. Mobile-compatible with Android APK support.",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "python3 -m http.server 8000",
+    "serve": "npx serve .",
+    "build:web": "echo 'Web version - just open index.html'",
+    "build:android": "cordova build android",
+    "build:android:release": "cordova build android --release",
+    "build:apk": "npm run build:android:release",
+    "test": "python3 validate.py",
+    "validate": "python3 validate.py",
+    "lint": "echo 'No linting configured yet'",
+    "prettier": "echo 'No prettier configured yet'"
+  },
+  "keywords": [
+    "phyllotaxis",
+    "generative-art",
+    "p5js",
+    "sunflower",
+    "fibonacci",
+    "golden-ratio",
+    "mobile",
+    "android",
+    "apk",
+    "sideload"
+  ],
+  "author": "Mistral AI",
+  "license": "MIT",
+  "homepage": "https://github.com/veruca-vee/phyllotaxis#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veruca-vee/phyllotaxis.git"
+  },
+  "bugs": {
+    "url": "https://github.com/veruca-vee/phyllotaxis/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "p5": "^1.9.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.3"
+  },
+  "cordova": {
+    "platforms": ["android"],
+    "plugins": []
+  }
+}

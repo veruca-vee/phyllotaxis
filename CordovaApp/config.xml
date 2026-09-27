@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.phyllotaxis.mistral" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Phyllotaxis</name>
+    <description>
+        Generative art app creating beautiful sunflower-like patterns based on the mathematical principles of phyllotaxis. Features multiple color modes and touch interaction.
+    </description>
+    <author email="veruca-vee@users.noreply.github.com" href="https://github.com/veruca-vee/phyllotaxis">
+        Mistral AI
+    </author>
+    <content src="index.html" />
+    
+    <!-- Access permissions -->
+    <access origin="*" />
+    
+    <!-- Allow intents -->
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    
+    <!-- Android specific -->
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+        <preference name="AndroidInsecureFileModeEnabled" value="false" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="www/img/logo.png" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#1a1a2e" />
+        <preference name="AndroidWindowStatusBarColor" value="#1a1a2e" />
+        <preference name="AndroidWindowNavigationBarColor" value="#1a1a2e" />
+        <preference name="AndroidWindowNavigationBarDividers" value="false" />
+        <preference name="AndroidEnableWebViewDebugging" value="false" />
+        <preference name="AndroidForceChromeWebView" value="true" />
+        <preference name="AndroidMinSdkVersion" value="24" />
+        <preference name="AndroidTargetSdkVersion" value="34" />
+        <preference name="orientation" value="portrait" />
+        <preference name="Fullscreen" value="true" />
+        <preference name="DisableCursor" value="true" />
+    </platform>
+    
+    <!-- iOS specific -->
+    <platform name="ios">
+        <preference name="UIWebViewBounce" value="false" />
+        <preference name="UIStatusBarStyle" value="blacktranslucent" />
+        <preference name="UIStatusBarHidden" value="false" />
+        <preference name="UIRequiresPersistentWiFi" value="false" />
+        <preference name="UIRequiresFullscreen" value="true" />
+        <preference name="UIEnableViewPortScale" value="false" />
+    </platform>
+    
+    <!-- Icons -->
+    <icon src="www/img/logo.png" />
+    
+    <!-- Splash screens -->
+    <splash src="www/img/splash.png" />
+</widget>
