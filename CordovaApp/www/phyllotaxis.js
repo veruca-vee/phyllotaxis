@@ -3,12 +3,12 @@
 // Based on the mathematical principles of phyllotaxis
 
 let angle = 0;
-let angleStep = 137.5; // Golden angle in degrees
+let angleStep = 137.5078; // Golden angle in degrees (360*(2-phi))
 let c = 4; // Controls the tightness of the spiral
 let n = 0; // Number of points
 let totalPoints = 500; // Total number of points to draw
-let colorMode = 0; // 0 = golden, 1 = rainbow, 2 = grayscale
-let bgColor = 20;
+let paletteMode = 0; // 0 = golden, 1 = rainbow, 2 = grayscale
+let bgColor = '#1a1a2e';
 let isMobile = false;
 let canvas;
 let isCordova = false;
@@ -38,7 +38,7 @@ function setup() {
 }
 
 function drawPhyllotaxis() {
-    background(bgColor);
+    background(26, 26, 46);
     
     // Center the drawing
     push();
@@ -46,7 +46,7 @@ function drawPhyllotaxis() {
     
     // Calculate optimal scaling based on screen size
     let screenSize = min(width, height);
-    c = map(screenSize, 300, 1500, 2, 6);
+    c = map(screenSize, 300, 1500, 4, 12);
     
     // Adjust point count for mobile (performance)
     if (isMobile && screenSize < 768) {
@@ -90,7 +90,7 @@ function drawPoint(i) {
     translate(x, y);
     
     // Color based on selected mode
-    switch(colorMode) {
+    switch(paletteMode) {
         case 0: // Golden color scheme
             fill(map(i, 0, totalPoints, 40, 65), 75, 90);
             break;
@@ -129,7 +129,7 @@ function touchStarted() {
 }
 
 function changeColorMode() {
-    colorMode = (colorMode + 1) % 3;
+    paletteMode = (paletteMode + 1) % 3;
     drawPhyllotaxis();
     updateModeText();
 }
@@ -138,7 +138,7 @@ function updateModeText() {
     let modeText = document.getElementById('mode-text');
     if (modeText) {
         let modes = ['Golden', 'Rainbow', 'Grayscale'];
-        modeText.textContent = modes[colorMode];
+        modeText.textContent = modes[paletteMode];
     }
 }
 

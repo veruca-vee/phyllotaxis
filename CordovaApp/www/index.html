@@ -7,9 +7,9 @@
     <meta name="HandheldFriendly" content="true">
     <meta name="theme-color" content="#1a1a2e">
     <meta name="format-detection" content="telephone=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com; img-src 'self' data: https://*; connect-src 'self' https://*;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https://*; connect-src 'self' https://*;">
     <title>Phyllotaxis</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <script src="p5.js"></script>
     <style>
         * {
             margin: 0;
@@ -150,5 +150,15 @@
         </div>
     </div>
     <script src="phyllotaxis.js"></script>
+    <script>
+      // Place canvas inside the container
+      document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('canvas-container');
+        const canvas = document.querySelector('canvas');
+        if (canvas && container) {
+          container.insertBefore(canvas, container.firstChild);
+        }
+      });
+    </script>
 </body>
 </html>
