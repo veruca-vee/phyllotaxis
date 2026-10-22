@@ -280,21 +280,21 @@ class Phyllotaxis(pyglet.window.Window):
         self.big = self._label(self.px, h - 50, "", size=30, bold=True)
         self.frac1 = self._label(self.px, h - 76, "", size=12, color=MUTED)
         self.frac2 = self._label(self.px, h - 94, "", size=12, color=MUTED)
-        self.diag = [self._label(self.px, h - 120 - 15 * i, "", size=12.5)
+        self.diag = [self._label(self.px, h - 116 - 14 * i, "", size=12.5)
                      for i in range(5)]
-        self.chips_fib = self._chip_row(h - 206, "FIBONACCI  ", FIB)
-        self.chips_luc = self._chip_row(h - 226, "LUCAS  ", LUC)
-        self._label(self.px, h - 248,
+        self.chips_fib = self._chip_row(h - 194, "FIBONACCI  ", FIB)
+        self.chips_luc = self._chip_row(h - 212, "LUCAS  ", LUC)
+        self._label(self.px, h - 232,
                     "r = c*sqrt(n)    theta = n * angle    phi = 1.6180339887...",
                     size=11.5, color=MUTED)
-        self._label(self.px, h - 264,
+        self._label(self.px, h - 246,
                     "Golden = 360/phi^2    Lucas = 360/(phi+2)", size=11.5, color=MUTED)
         self.bar_labels = []
         self.bar_tracks = []
         self.bar_fills = []
         self.bar_values = []
         for i in range(4):
-            y = h - 300 - i * 50
+            y = h - 280 - i * 42
             self.bar_labels.append(self._label(self.px, y, "", size=12, bold=True))
             self.bar_tracks.append(shapes.Rectangle(
                 self.px, y - 24, 472, 10, color=TRACK, batch=self.panel_batch))
@@ -302,8 +302,8 @@ class Phyllotaxis(pyglet.window.Window):
                 self.px, y - 24, 10, 10, color=PINK, batch=self.panel_batch))
             self.bar_values.append(self._label(self.px + 472, y, "", size=13,
                                                bold=True, anchor_x="right"))
-        self._divider(h - 486)
-        self.shape_title_y = h - 498
+        self._divider(h - 452)
+        self.shape_title_y = h - 462
         self._label(self.px, self.shape_title_y, "SHAPES  (S cycles, click applies)",
                     size=12, bold=True, color=MUTED)
         self.shape_labels = []
@@ -315,8 +315,8 @@ class Phyllotaxis(pyglet.window.Window):
         self.why_label = self._label(self.px + 248, self.shape_title_y - 22 - 2 * 20,
                                      "WHY IT MATTERS  (W)", size=12.5, color=HOT)
         self.why_label.bold = True
-        self._divider(h - 574)
-        self.preset_title_y = h - 586
+        self._divider(h - 537)
+        self.preset_title_y = h - 547
         self._label(self.px, self.preset_title_y, "ANGLE PRESETS  (P cycles, click jumps)",
                     size=12, bold=True, color=MUTED)
         self.preset_labels = []
@@ -324,13 +324,13 @@ class Phyllotaxis(pyglet.window.Window):
             col, row = i % 3, i // 3
             self.preset_labels.append(self._label(
                 self.px + col * 160, self.preset_title_y - 22 - row * 20, name, size=12))
-        self._divider(h - 660)
-        self.trace_label = self._label(self.px, h - 674, "", size=12.5, color=HOT)
+        self._divider(h - 620)
+        self.trace_label = self._label(self.px, h - 634, "", size=12.5, color=HOT)
         self.hint = self._label(
-            self.px, h - 694,
+            self.px, h - 654,
             "Up/Dn pick bar - Left/Right slide - Shift x10 - G golden - L lucas",
             size=11, color=MUTED)
-        self._label(self.px, h - 712,
+        self._label(self.px, h - 672,
                     "S shapes - P angles - T trace - N numbers - W why - Space sweep - Esc quit",
                     size=11, color=MUTED)
 
@@ -351,7 +351,7 @@ class Phyllotaxis(pyglet.window.Window):
         self.info_batches = []
         self._info_keepalive = []
         tx = 70
-        wrap_at = max(60, int((w - 2 * tx) / 8.2))
+        wrap_at = max(60, int((w - 2 * tx) / 9.6))
         for pi, (title, paras) in enumerate(INFO_PAGES):
             batch = pyglet.graphics.Batch()
             self._info_keepalive.append(shapes.Rectangle(
@@ -373,7 +373,7 @@ class Phyllotaxis(pyglet.window.Window):
             self._info_keepalive.append(pyglet.text.Label(
                 f"page {pi + 1} of {len(INFO_PAGES)}   -   PgDn / click = next   -   "
                 f"PgUp = back   -   W or Esc = back to the spiral",
-                x=tx, y=40, font_size=12, color=MUTED + (255,), batch=batch))
+                x=tx, y=72, font_size=12, color=MUTED + (255,), batch=batch))
             self.info_batches.append(batch)
         self.info_page = 0
 
