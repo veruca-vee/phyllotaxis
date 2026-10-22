@@ -9,15 +9,18 @@ bars first (that is the point of the exercise):
     Left / Right  move it (Shift = x10 step) -- key repeat works
     G             snap to golden (137.507764...)
     L             snap to Lucas (99.501553...)
+    S             cycle the shapes (Sunflower / Fibonacci / Spiral of
+                  Life / Lucas -- the other one / 21-dot hand check)
     P             cycle the presets
     T             cycle the traced arm (off, 13, 18, 21, 29, 34, ...)
     N             toggle seed numbers
     D             21-dot mode (your hand-draw check)
+    W             the WHY pages: what the spiral means, life, God, all that
     Space         sweep 99.4 <-> 144 and back
     Esc           quit
 
 The mouse still works: click a bar to choose it, drag to slide it,
-click a preset to jump.
+click a preset or a shape to jump, click WHY IT MATTERS for the pages.
 
 State persists to state.json next to this file, like the widget's did.
 """
@@ -36,12 +39,89 @@ LUCAS = 99.50155281000757
 FIB = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233]
 LUC = [2, 1, 3, 4, 7, 11, 18, 29, 47, 76, 123, 199]
 STEPS = [0, 13, 18, 21, 29, 34, 47, 55, 76, 89]
-PRESETS = [(90, "90 - 4 spokes"), (LUCAS, "99.502 - LUCAS"), (120, "120 - 3 spokes"),
-           (135, "135 - 8 spokes"), (137.3, "137.3 - near miss"), (GOLD, "137.508 - GOLDEN"),
-           (137.92, "137.92 - near miss"), (144, "144 - 5 spokes"), (180, "180 - 2 spokes")]
+PRESETS = [(90, "90 deg"), (LUCAS, "99.502 Lucas"), (120, "120 deg"),
+           (135, "135 deg"), (137.3, "137.3 near"), (GOLD, "137.508 GOLD"),
+           (137.92, "137.92 near"), (144, "144 deg"), (180, "180 deg")]
+
+# Whole-picture presets: not just the angle, the whole state a shape wants.
+SHAPES = [
+    ("Sunflower",            {"angle": GOLD, "seeds": 1000, "dot": 1.1, "step": 34, "nums": False}),
+    ("Fibonacci (count it)", {"angle": GOLD, "seeds": 144, "dot": 1.35, "step": 34, "nums": True}),
+    ("Spiral of Life",       {"angle": GOLD, "seeds": 300, "dot": 1.3, "step": 0, "nums": False}),
+    ("Lucas - the other one", {"angle": LUCAS, "seeds": 400, "dot": 1.0, "step": 29, "nums": False}),
+    ("21-dot hand check",    {"angle": GOLD, "seeds": 21, "dot": 1.5, "step": 13, "nums": True}),
+]
+
+# The "why" pages (W key, or the WHY cell under the shapes). Written to be
+# read on the laptop screen: short lines, no preaching, math kept honest.
+INFO_PAGES = [
+    ("WHAT YOU ARE LOOKING AT", [
+        "Every dot is one seed. The app places seed number n at angle n times "
+        "the divergence angle, pushed out from the centre by the square root "
+        "of n (Vogel's model). That is the whole machine: one angle, chosen "
+        "once, repeated hundreds of times. Everything else -- spirals, spokes, "
+        "flowers -- is what that single number does when you let it run.",
+        "If the angle is a simple fraction of a turn (90 deg = 1/4, 120 deg = "
+        "1/3, 144 deg = 2/5) the seeds stack onto a few straight spokes. Seeds "
+        "shade the seeds behind them, wedges of ground go empty, and the head "
+        "starves its own children. Try the angle presets: the fractions are "
+        "the pretty failures.",
+        "If the angle is irrational, no seed ever lands exactly behind an "
+        "earlier one, and the eye picks out spiral arms instead. How good the "
+        "packing is depends on how irrational the number is -- and one number "
+        "is the most irrational of all.",
+    ]),
+    ("WHY GOLDEN -- AND WHY FIBONACCI SHOWS UP", [
+        "Phi (1.6180339887...) is the hardest number to approximate with "
+        "fractions; Hurwitz's theorem makes that precise. So the golden angle, "
+        "360/phi^2 = 137.507764... degrees, is the angle that stays furthest "
+        "from every spoke pattern at every scale. No seed lines up, no gap "
+        "repeats, every seed gets its share of light and room. A sunflower "
+        "does not solve this equation. Heads that landed near this angle "
+        "simply packed more viable seeds, and the angle is what survived.",
+        "The Fibonacci numbers were never planted. Stand at any seed: its "
+        "nearest neighbours sit a Fibonacci number of steps away along the "
+        "spiral, forced by the angle itself. So when you count the arms of a "
+        "real sunflower head, clockwise then anticlockwise, you always get "
+        "consecutive Fibonacci numbers -- 34 and 55, 55 and 89. Press the "
+        "Fibonacci shape and count them here.",
+        "About one sunflower in fifty breaks the pattern honestly: same phi, "
+        "different starting seeds, and the arm counts come out as Lucas "
+        "numbers -- 29 and 47. That is the 'other one' in the shapes menu, "
+        "the Lucas sunflower from the spiral notes. Same law, different "
+        "family. Pinecones (8/13), pineapples (8/13/21), artichokes and "
+        "Romanesco run the same packing wherever growing things compete for "
+        "space and light.",
+    ]),
+    ("LIFE, GOD, AND ONE HONEST NUMBER", [
+        "People reach for God at this number for a real reason: a law this "
+        "simple should not be this fruitful. One irrational constant, no "
+        "blueprint, no foreman -- and out of it falls the most efficient "
+        "packing life has found, repeated in seed heads, shells, storms and "
+        "spiral galaxies. Traditions call that a signature, sacred geometry, "
+        "the fingerprint of a maker who hides in ratios.",
+        "The math itself takes no side. It says only this: of all the angles "
+        "a growing tip could turn, this is the one that never wastes, never "
+        "repeats and never locks into spokes -- growth that stays open at "
+        "every step, forever, without ever arriving. Whether you read that as "
+        "evolution finding the optimum or as design showing through the "
+        "optimum is a stance you bring to the number, not one the number "
+        "proves. The spiral notebooks left 'God' as an open gap on purpose. "
+        "This screen will not close it. It just shows, live, why the question "
+        "keeps attaching itself to 137.507764.",
+        "One last thing, because you will feel it when you sweep: near the "
+        "golden angle the pattern holds; a third of a degree off, it tears. "
+        "The universe's most generous packing is also a knife edge. Spiral "
+        "out, keep going.",
+    ]),
+]
 
 HERE = Path(__file__).resolve().parent
 STATE_FILE = HERE / "state.json"
+
+# pyglet's page-key names differ across bindings; take whichever exists.
+PAGEDOWN = getattr(key, "PAGEDOWN", getattr(key, "PAGE_DOWN", None))
+PAGEUP = getattr(key, "PAGEUP", getattr(key, "PAGE_UP", None))
 
 INK = (242, 234, 217)        # the widget's warm paper text
 MUTED = (168, 154, 128)
@@ -119,6 +199,8 @@ class Phyllotaxis(pyglet.window.Window):
         self.sweep_dir = 1
         self.focus = 1         # the zoom bar: where the interesting stuff lives
         self.dirty = True
+        self.show_info = False
+        self.info_page = 0
 
         self.batch = pyglet.graphics.Batch()
         self.panel_batch = pyglet.graphics.Batch()
@@ -127,6 +209,7 @@ class Phyllotaxis(pyglet.window.Window):
         self.dots = []
         self.num_labels = []
         self._build_panel()
+        self._build_info()
         self.bars = [
             Bar("ANGLE -- FULL TURN", 0.0, 360.0, 0.05, "{:.4f} deg",
                 lambda: self.S["angle"], self._set_angle),
@@ -161,6 +244,21 @@ class Phyllotaxis(pyglet.window.Window):
     def _stop_sweep(self):
         self.sweeping = False
 
+    def _current_shape(self):
+        """The SHAPES index the live state matches, or None."""
+        for i, (_, st) in enumerate(SHAPES):
+            if abs(self.S["angle"] - st["angle"]) < 0.0005 \
+                    and int(self.S["seeds"]) == st["seeds"] \
+                    and int(self.S["step"]) == st["step"]:
+                return i
+        return None
+
+    def _apply_shape(self, i):
+        self._stop_sweep()
+        self.S.update(SHAPES[i][1])
+        self.dirty = True
+        self._persist()
+
     # ---- panel ------------------------------------------------------------
 
     def _label(self, x, y, text, size=13, color=INK, bold=False, anchor_x="left"):
@@ -171,46 +269,112 @@ class Phyllotaxis(pyglet.window.Window):
         return lab
 
     def _build_panel(self):
+        # Laid out as a strict vertical budget from the top of the ACTUAL
+        # window (the Flex reports 1300x730, not 1366x768 -- measuring off
+        # the real height is what keeps the bottom sections from ever
+        # landing on top of each other again).
         w, h = self.width, self.height
         self.px = w - 512                       # panel left edge
-        self.big = self._label(self.px, h - 58, "", size=30, bold=True)
-        self.frac1 = self._label(self.px, h - 84, "", size=12, color=MUTED)
-        self.frac2 = self._label(self.px, h - 102, "", size=12, color=MUTED)
-        self.diag = [self._label(self.px, h - 132 - 17 * i, "", size=12.5)
+        shapes.Rectangle(self.px - 16, 0, 512 + 16, h, color=PANEL,
+                         batch=self.panel_batch)
+        self.big = self._label(self.px, h - 50, "", size=30, bold=True)
+        self.frac1 = self._label(self.px, h - 76, "", size=12, color=MUTED)
+        self.frac2 = self._label(self.px, h - 94, "", size=12, color=MUTED)
+        self.diag = [self._label(self.px, h - 120 - 15 * i, "", size=12.5)
                      for i in range(5)]
-        self.chips_fib = self._chip_row(h - 252, "FIBONACCI  ", FIB)
-        self.chips_luc = self._chip_row(h - 278, "LUCAS  ", LUC)
-        self._label(self.px, h - 306,
+        self.chips_fib = self._chip_row(h - 206, "FIBONACCI  ", FIB)
+        self.chips_luc = self._chip_row(h - 226, "LUCAS  ", LUC)
+        self._label(self.px, h - 248,
                     "r = c*sqrt(n)    theta = n * angle    phi = 1.6180339887...",
                     size=11.5, color=MUTED)
-        self._label(self.px, h - 324,
+        self._label(self.px, h - 264,
                     "Golden = 360/phi^2    Lucas = 360/(phi+2)", size=11.5, color=MUTED)
         self.bar_labels = []
         self.bar_tracks = []
         self.bar_fills = []
         self.bar_values = []
         for i in range(4):
-            y = h - 386 - i * 62
+            y = h - 300 - i * 50
             self.bar_labels.append(self._label(self.px, y, "", size=12, bold=True))
             self.bar_tracks.append(shapes.Rectangle(
-                self.px, y - 26, 472, 10, color=TRACK, batch=self.panel_batch))
+                self.px, y - 24, 472, 10, color=TRACK, batch=self.panel_batch))
             self.bar_fills.append(shapes.Rectangle(
-                self.px, y - 26, 10, 10, color=PINK, batch=self.panel_batch))
+                self.px, y - 24, 10, 10, color=PINK, batch=self.panel_batch))
             self.bar_values.append(self._label(self.px + 472, y, "", size=13,
                                                bold=True, anchor_x="right"))
-        self.preset_title_y = h - 386 - 4 * 62 - 8
-        self._label(self.px, self.preset_title_y, "PRESETS  (P cycles, click jumps)",
+        self._divider(h - 486)
+        self.shape_title_y = h - 498
+        self._label(self.px, self.shape_title_y, "SHAPES  (S cycles, click applies)",
+                    size=12, bold=True, color=MUTED)
+        self.shape_labels = []
+        for i, (name, _) in enumerate(SHAPES):
+            col, row = i % 2, i // 2
+            self.shape_labels.append(self._label(
+                self.px + col * 248, self.shape_title_y - 22 - row * 20, name, size=12.5))
+        # the 6th grid cell (col 1, row 2) is the WHY door, not a shape
+        self.why_label = self._label(self.px + 248, self.shape_title_y - 22 - 2 * 20,
+                                     "WHY IT MATTERS  (W)", size=12.5, color=HOT)
+        self.why_label.bold = True
+        self._divider(h - 574)
+        self.preset_title_y = h - 586
+        self._label(self.px, self.preset_title_y, "ANGLE PRESETS  (P cycles, click jumps)",
                     size=12, bold=True, color=MUTED)
         self.preset_labels = []
         for i, (_, name) in enumerate(PRESETS):
-            col, row = divmod(i, 5)
+            col, row = i % 3, i // 3
             self.preset_labels.append(self._label(
-                self.px + col * 240, self.preset_title_y - 24 - row * 20, name, size=12))
+                self.px + col * 160, self.preset_title_y - 22 - row * 20, name, size=12))
+        self._divider(h - 660)
+        self.trace_label = self._label(self.px, h - 674, "", size=12.5, color=HOT)
         self.hint = self._label(
-            self.px, 26,
-            "Up/Dn bar - Left/Right move - Shift x10 - G golden - L lucas - T trace - N numbers - D 21-dot - Space sweep",
+            self.px, h - 694,
+            "Up/Dn pick bar - Left/Right slide - Shift x10 - G golden - L lucas",
             size=11, color=MUTED)
-        self.trace_label = self._label(self.px, 48, "", size=12.5, color=HOT)
+        self._label(self.px, h - 712,
+                    "S shapes - P angles - T trace - N numbers - W why - Space sweep - Esc quit",
+                    size=11, color=MUTED)
+
+    def _divider(self, y):
+        ln = shapes.Line(self.px, y, self.px + 472, y, thickness=1,
+                         color=TRACK, batch=self.panel_batch)
+        ln.opacity = 160
+
+    def _build_info(self):
+        """The WHY overlay: full-window pages, one pyglet Group per page."""
+        w, h = self.width, self.height
+        self.info_batch = pyglet.graphics.Batch()
+        bg = shapes.Rectangle(0, 0, w, h, color=(16, 10, 14), batch=self.info_batch)
+        bg.opacity = 252
+        self.info_groups = []
+        tx = 70
+        wrap_at = max(60, int((w - 2 * tx) / 8.2))
+        for pi, (title, paras) in enumerate(INFO_PAGES):
+            grp = pyglet.graphics.Group()
+            self.info_groups.append(grp)
+            lines = []
+            for para in paras:
+                lines.extend(textwrap.wrap(para, wrap_at))
+                lines.append("")
+            y = h - 96
+            t = pyglet.text.Label(title, x=tx, y=y, font_size=21,
+                                  color=HOT + (255,), batch=self.info_batch, group=grp)
+            t.bold = True
+            y -= 52
+            for ln in lines:
+                pyglet.text.Label(ln, x=tx, y=y, font_size=14,
+                                  color=INK + (255,), batch=self.info_batch, group=grp)
+                y -= 23
+            pyglet.text.Label(
+                f"page {pi + 1} of {len(INFO_PAGES)}   -   PgDn / click = next   -   "
+                f"PgUp = back   -   W or Esc = back to the spiral",
+                x=tx, y=40, font_size=12, color=MUTED + (255,),
+                batch=self.info_batch, group=grp)
+        self._show_info_page(0)
+
+    def _show_info_page(self, i):
+        self.info_page = max(0, min(len(INFO_PAGES) - 1, i))
+        for j, grp in enumerate(self.info_groups):
+            grp.visible = j == self.info_page
 
     def _chip_row(self, y, title, seq):
         self._label(self.px, y, title, size=11.5, bold=True, color=MUTED)
@@ -324,6 +488,11 @@ class Phyllotaxis(pyglet.window.Window):
         for i, (pa, _) in enumerate(PRESETS):
             self.preset_labels[i].color = HOT + (255,) if abs(a - pa) < 0.0005 \
                 else MUTED + (255,)
+        cur_shape = self._current_shape()
+        for i, lab in enumerate(self.shape_labels):
+            hot = i == cur_shape
+            lab.color = HOT + (255,) if hot else INK + (255,)
+            lab.bold = hot
         self.trace_label.text = ("SWEEPING 99.4 <-> 144" if self.sweeping else
                                  f"trace: every {self.S['step']}th seed" if self.S['step']
                                  else "trace: off")
@@ -348,13 +517,30 @@ class Phyllotaxis(pyglet.window.Window):
 
     def on_draw(self):
         self.clear()
+        if self.show_info:
+            self.info_batch.draw()
+            return
         self.batch.draw()
         self.panel_batch.draw()
 
     def on_key_press(self, symbol, modifiers):
         mult = 10 if modifiers & key.MOD_SHIFT else 1
+        if self.show_info:
+            if symbol in (key.ESCAPE, key.W):
+                self.show_info = False
+            elif symbol == PAGEDOWN or symbol in (key.RIGHT, key.SPACE, key.ENTER):
+                if self.info_page >= len(INFO_PAGES) - 1:
+                    self.show_info = False
+                else:
+                    self._show_info_page(self.info_page + 1)
+            elif symbol == PAGEUP or symbol == key.LEFT:
+                self._show_info_page(self.info_page - 1)
+            return
         if symbol == key.ESCAPE:
             self.close()
+        elif symbol == key.W:
+            self.show_info = True
+            self._show_info_page(0)
         elif symbol == key.UP:
             self.focus = (self.focus - 1) % len(self.bars)
             self.dirty = True
@@ -375,6 +561,9 @@ class Phyllotaxis(pyglet.window.Window):
             self._stop_sweep()
             self.S["step"] = 29
             self._set_angle(LUCAS)
+        elif symbol == key.S:
+            cur = self._current_shape()
+            self._apply_shape(0 if cur is None else (cur + 1) % len(SHAPES))
         elif symbol == key.T:
             i = STEPS.index(int(self.S["step"]))
             self._set("step", STEPS[(i + 1) % len(STEPS)])
@@ -394,6 +583,17 @@ class Phyllotaxis(pyglet.window.Window):
             self.sweeping = not self.sweeping
 
     def on_mouse_press(self, x, y, button, modifiers):
+        if self.show_info:
+            if self.info_page >= len(INFO_PAGES) - 1:
+                self.show_info = False
+            else:
+                self._show_info_page(self.info_page + 1)
+            return
+        lab = self.why_label
+        if lab.x - 4 <= x <= lab.x + 240 and lab.y - 4 <= y <= lab.y + 16:
+            self.show_info = True
+            self._show_info_page(0)
+            return
         for i, bar in enumerate(self.bars):
             if bar.rect and bar.rect[0] - 6 <= x <= bar.rect[0] + bar.rect[2] + 6 \
                     and bar.rect[1] - 8 <= y <= bar.rect[1] + 20:
@@ -402,9 +602,14 @@ class Phyllotaxis(pyglet.window.Window):
                 bar.set_fraction((x - bar.rect[0]) / bar.rect[2])
                 self._dragging = i
                 return
+        # shape rows: a click applies the whole bundle
+        for i, lab in enumerate(self.shape_labels):
+            if lab.x - 4 <= x <= lab.x + 240 and lab.y - 4 <= y <= lab.y + 16:
+                self._apply_shape(i)
+                return
         # preset rows
         for i, lab in enumerate(self.preset_labels):
-            if lab.x - 4 <= x <= lab.x + 225 and lab.y - 4 <= y <= lab.y + 16:
+            if lab.x - 4 <= x <= lab.x + 152 and lab.y - 4 <= y <= lab.y + 16:
                 self._stop_sweep()
                 self._set_angle(PRESETS[i][0])
                 return
