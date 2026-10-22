@@ -340,41 +340,45 @@ class Phyllotaxis(pyglet.window.Window):
         ln.opacity = 160
 
     def _build_info(self):
-        """The WHY overlay: full-window pages, one pyglet Group per page."""
+        """The WHY overlay: one Batch per page, drawn instead of the spiral.
+
+        Every drawable is kept in self._info_keepalive: a pyglet object
+        that loses its last Python reference deletes itself from its
+        batch, which is exactly how the first version of this overlay
+        ended up painting a perfect black rectangle and nothing else.
+        """
         w, h = self.width, self.height
-        self.info_batch = pyglet.graphics.Batch()
-        bg = shapes.Rectangle(0, 0, w, h, color=(16, 10, 14), batch=self.info_batch)
-        bg.opacity = 252
-        self.info_groups = []
+        self.info_batches = []
+        self._info_keepalive = []
         tx = 70
         wrap_at = max(60, int((w - 2 * tx) / 8.2))
         for pi, (title, paras) in enumerate(INFO_PAGES):
-            grp = pyglet.graphics.Group()
-            self.info_groups.append(grp)
+            batch = pyglet.graphics.Batch()
+            self._info_keepalive.append(shapes.Rectangle(
+                0, 0, w, h, color=(16, 10, 14), batch=batch))
             lines = []
             for para in paras:
                 lines.extend(textwrap.wrap(para, wrap_at))
                 lines.append("")
             y = h - 96
             t = pyglet.text.Label(title, x=tx, y=y, font_size=21,
-                                  color=HOT + (255,), batch=self.info_batch, group=grp)
+                                  color=HOT + (255,), batch=batch)
             t.bold = True
+            self._info_keepalive.append(t)
             y -= 52
             for ln in lines:
-                pyglet.text.Label(ln, x=tx, y=y, font_size=14,
-                                  color=INK + (255,), batch=self.info_batch, group=grp)
+                self._info_keepalive.append(pyglet.text.Label(
+                    ln, x=tx, y=y, font_size=14, color=INK + (255,), batch=batch))
                 y -= 23
-            pyglet.text.Label(
+            self._info_keepalive.append(pyglet.text.Label(
                 f"page {pi + 1} of {len(INFO_PAGES)}   -   PgDn / click = next   -   "
                 f"PgUp = back   -   W or Esc = back to the spiral",
-                x=tx, y=40, font_size=12, color=MUTED + (255,),
-                batch=self.info_batch, group=grp)
-        self._show_info_page(0)
+                x=tx, y=40, font_size=12, color=MUTED + (255,), batch=batch))
+            self.info_batches.append(batch)
+        self.info_page = 0
 
     def _show_info_page(self, i):
         self.info_page = max(0, min(len(INFO_PAGES) - 1, i))
-        for j, grp in enumerate(self.info_groups):
-            grp.visible = j == self.info_page
 
     def _chip_row(self, y, title, seq):
         self._label(self.px, y, title, size=11.5, bold=True, color=MUTED)
@@ -518,7 +522,7 @@ class Phyllotaxis(pyglet.window.Window):
     def on_draw(self):
         self.clear()
         if self.show_info:
-            self.info_batch.draw()
+            self.info_batches[self.info_page].draw()
             return
         self.batch.draw()
         self.panel_batch.draw()
